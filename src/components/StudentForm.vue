@@ -89,7 +89,7 @@
     padding: 1.5rem;
     background: #f9f9f9;
     border-radius: 8px;
-    align-items: center;
+    align-items: flex-start;
 }
 
 #name, #index, #DoB, #municipalityOptions {
