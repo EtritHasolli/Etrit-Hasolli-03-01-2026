@@ -48,96 +48,73 @@
             SearchBar,
             DeleteDialog
         },
-    
-        data() {
-            return {
-                students: JSON.parse(localStorage.getItem('students') || '[]'),
-                archive: JSON.parse(localStorage.getItem('archive') || '[]'),
-                searchQuery: '',
-                showModal: false,
-                showDeleteDialog: false,
-                studentToDelete: null,
-            }
-        },
 
         computed: {
             filteredStudents() {
-                if(!this.searchQuery) {
-                    return this.students
-                }
-            
-                const filters = ["index", "name", "municipality"]
-                const query = this.searchQuery.toLowerCase()
-                return this.students.filter(student => 
-                    filters.some(target => {
-                        const value = student[target]
-
-                        if (value == null) return false
-                        return String(value).toLowerCase().includes(query)
-                    })
-                )
+                return this.$store.getters.filteredStudents
             },
+            showModal: {
+                get() {
+                    return this.$store.state.showModal
+                },
+                set(value) {
+                    this.$store.commit('SET_SHOW_MODAL', value)
+                }
+            },
+            showDeleteDialog: {
+                get() {
+                    return this.$store.state.showDeleteDialog
+                },
+                set(value) {
+                    this.$store.commit('SET_SHOW_DELETE_DIALOG', value)
+                }
+            },
+            studentToDelete() {
+                return this.$store.state.studentToDelete
+            }
         },
 
         methods: {
             displayStudentForm() {
-                this.showModal = true
+                this.$store.commit('SET_SHOW_MODAL', true)
             },
 
             closeModal() {
-                this.showModal = false
+                this.$store.commit('SET_SHOW_MODAL', false)
             },
 
-            addStudent(student) {
-                this.students = JSON.parse(localStorage.getItem('students') || '[]')
-
-                const indexExists = this.students.some(s => s.index == student.index) 
-
-                if (indexExists) {
-                    alert('A student with this index number already exists!')
-                    return
+            async addStudent(student) {
+                try {
+                    await this.$store.dispatch('addStudent', student)
+                    this.closeModal()
+                } catch (error) {
+                    alert(error.message)
                 }
-
-                const newStudent = {
-                    ...student,
-                    id: Date.now()
-                }
-                this.students.push(newStudent)
-                localStorage.setItem('students', JSON.stringify(this.students))
-                this.closeModal()
             },
 
             editStudent(student) {
-                this.$router.push(`/edit/${student.id}`)
+                this.$router.push(`/edit/${student.index}`)
             },
 
             handleSearch(query) {
-                this.searchQuery = query
+                this.$store.commit('SET_SEARCH_QUERY', query)
             },
 
             handleDeleteClick(student) {
-                this.studentToDelete = student
-                this.showDeleteDialog = true
+                this.$store.commit('SET_STUDENT_TO_DELETE', student)
+                this.$store.commit('SET_SHOW_DELETE_DIALOG', true)
             },
 
             confirmDelete() {
                 if (this.studentToDelete) {
-                    const newStudent = {
-                        ...this.studentToDelete,
-                        archivedDate: Date.now()
-                    }
-                    this.archive.push(newStudent)
-                    localStorage.setItem('archive', JSON.stringify(this.archive))
-
-                    this.students = this.students.filter(s => s.id != this.studentToDelete.id)
-                    localStorage.setItem('students', JSON.stringify(this.students))
+                    this.$store.dispatch('deleteStudent', this.studentToDelete)
                 }
                 this.cancelDelete()
             },
 
             cancelDelete() {
-                this.showDeleteDialog = false
-                this.studentToDelete = null
+                this.$store.commit('SET_SHOW_DELETE_DIALOG', false)
+                this.$store.commit('SET_STUDENT_TO_DELETE', null)
             }
         }
     }

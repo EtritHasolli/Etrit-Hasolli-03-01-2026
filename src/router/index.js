@@ -15,7 +15,7 @@ const routes = [
   { path: '/student', component: StudentPage },
   { path: '/archive', component: ArchivePage },
   { path: '/help', component: HelpPage },
-  { path: '/edit/:id', component: EditStudent }
+  { path: '/edit/:index', component: EditStudent }
 ]
 
 const router = createRouter({

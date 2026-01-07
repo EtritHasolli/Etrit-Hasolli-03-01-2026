@@ -74,13 +74,13 @@
                         </span>
                     </th>
                     <th v-if="$route.path === '/archive'"
-                        @click="handleSort('archivedDate')"
+                        @click="handleSort('archiveDate')"
                         class="sortable-header"
                     >
                         Archive Date
                         <span class="sort-icon-wrapper">
                             <FontAwesomeIcon 
-                                v-if="sortColumn !== 'archivedDate'" 
+                                v-if="sortColumn !== 'archiveDate'" 
                                 :icon="faSort" 
                                 class="sort-icon-default" 
                             />
@@ -109,7 +109,7 @@
                     <td>{{ student.name }}</td>
                     <td>{{ formatDate(student.dateOfBirth) }}</td>
                     <td>{{ student.municipality }}</td>
-                    <td v-if="$route.path === '/archive'">{{ formatDate(student.archivedDate) }}</td>
+                    <td v-if="$route.path === '/archive'">{{ formatDate(student.archiveDate) }}</td>
                     <td class="action-cell">
                         <!-- For archive: show View and Restore -->
                         <template v-if="mode === 'archive'">
@@ -260,7 +260,7 @@
                     let aVal = a[this.sortColumn]
                     let bVal = b[this.sortColumn]
 
-                    if (this.sortColumn === 'dateOfBirth' || this.sortColumn === 'archivedDate') {
+                    if (this.sortColumn === 'dateOfBirth' || this.sortColumn === 'archiveDate') {
                         aVal = new Date(aVal)
                         bVal = new Date(bVal)
                     } else {

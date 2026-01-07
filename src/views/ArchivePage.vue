@@ -13,7 +13,7 @@
                 <div class="student-details" v-if="selectedStudent">
                     <div class="detail-row">
                         <label>Index:</label>
-                        <span>{{ selectedStudent.index }}</span>
+                        <span>{{ selectedStudent.index}}</span>
                     </div>
                     <div class="detail-row">
                         <label>Name:</label>
@@ -29,7 +29,7 @@
                     </div>
                     <div class="detail-row">
                         <label>Archived Date:</label>
-                        <span>{{ formatDate(selectedStudent.archivedDate) }}</span>
+                        <span>{{ formatDate(selectedStudent.archiveDate) }}</span>
                     </div>
                 </div>
             </div>
@@ -60,8 +60,6 @@
     
         data() {
             return {
-                students: JSON.parse(localStorage.getItem('students') || '[]'),
-                archive: JSON.parse(localStorage.getItem('archive') || '[]'),
                 searchQuery: '',
                 showModal: false,
                 selectedStudent: null
@@ -70,16 +68,15 @@
 
         computed: {
             filteredStudents() {
-                if(!this.searchQuery) {
-                    return this.archive
+                if (!this.searchQuery) {
+                    return this.$store.state.archive
                 }
-            
+
                 const filters = ["index", "name", "municipality"]
                 const query = this.searchQuery.toLowerCase()
-                return this.archive.filter(student => 
+                return this.$store.state.archive.filter(student => 
                     filters.some(target => {
                         const value = student[target]
-
                         if (value == null) return false
                         return String(value).toLowerCase().includes(query)
                     })
@@ -97,11 +94,10 @@
             },
 
             restoreStudent(student) {
-                this.students.push(student)
-                localStorage.setItem('students', JSON.stringify(this.students))
+                this.$store.commit('ADD_STUDENT', student)
 
-                this.archive = this.archive.filter(s => s.id != student.id)
-                localStorage.setItem('archive', JSON.stringify(this.archive))
+                const archive = this.$store.state.archive.filter(s => s.index != student.index)
+                this.$store.commit('SET_ARCHIVE', archive)
             },
 
             viewStudent(student) {
@@ -110,7 +106,7 @@
             },
 
             handleSearch(query) {
-                this.searchQuery = query
+                this.$store.commit('SET_SEARCH_QUERY', query)
             },
 
             formatDate(timestamp) {

@@ -3,7 +3,7 @@
         
         <div id="index">
             <label for="index">Index:</label>
-            <input v-model="index" placeholder="1491" type="number" max="9999" required />
+            <input :value="index" placeholder="Auto-generated" disabled />
         </div>
 
         <div id="name">
@@ -37,7 +37,7 @@
 
         data() {
             return {
-                index: '',
+                index: Date.now(),
                 name: '',
                 dateOfBirth: '',
                 municipality: '',
@@ -47,13 +47,12 @@
                     'Lipjan',
                     'Obiliq'
                 ],
-                students: JSON.parse(localStorage.getItem('students') || '[]'),
             }
         },
 
         methods: {
             addStudent() {
-                if(!this.index || !this.name || !this.dateOfBirth || !this.municipality) return;
+                if(!this.name || !this.dateOfBirth || !this.municipality) return;
 
                 this.$emit('add', { 
                     index: this.index,
@@ -62,7 +61,7 @@
                     municipality: this.municipality
                 })
 
-                this.index = ''
+                this.index = Date.now()
                 this.name = ''
                 this.dateOfBirth = ''
                 this.municipality = ''

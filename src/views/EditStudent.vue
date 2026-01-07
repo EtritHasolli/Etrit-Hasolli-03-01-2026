@@ -4,7 +4,7 @@
         <div class="edit-form">
             <div class="form-group">
                 <label for="edit-index">Index</label>
-                <input id="edit-index" v-model="index" placeholder="1741" class="form-input" />
+                <input id="edit-index" :value="index" placeholder="Auto-generated" class="form-input" disabled />
             </div>
             <div class="form-group">
                 <label for="edit-name">Name</label>
@@ -34,7 +34,7 @@
 
         data() {
             return {
-                studentId: null,
+                studentIndex: null,
                 index: '',
                 name: '',
                 dateOfBirth: '',
@@ -49,10 +49,9 @@
         },
 
         mounted() {
-            this.studentId = this.$route.params.id
+            this.studentIndex = this.$route.params.index
 
-            const students = JSON.parse(localStorage.getItem('students') || '[]')
-            const student = students.find(s => s.id == this.studentId)
+            const student = this.$store.state.students.find(s => s.index == this.studentIndex)
 
             if (student) {
                 this.index = student.index
@@ -69,18 +68,13 @@
 
         methods: {
             saveStudent() {
-                const students = JSON.parse(localStorage.getItem('students') || '[]')
-                const studentIndex = students.findIndex(s => s.id == this.studentId)
-                if (studentIndex !== -1) {
-                    students[studentIndex] = {
-                        id: this.studentId,
-                        index: this.index,
-                        name: this.name,
-                        dateOfBirth: this.dateOfBirth,
-                        municipality: this.municipality
-                    }
-                    localStorage.setItem('students', JSON.stringify(students))
+                const updatedStudent = {
+                    index: this.studentIndex,
+                    name: this.name,
+                    dateOfBirth: this.dateOfBirth,
+                    municipality: this.municipality
                 }
+                this.$store.dispatch('updateStudent', updatedStudent)
                 this.$router.push('/student')
             },
             goBack() {
