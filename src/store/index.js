@@ -1,30 +1,5 @@
 import { createStore } from 'vuex';
-
-const loadState = () => {
-    try {
-        const students = JSON.parse(localStorage.getItem('students') || '[]')
-        const archive = JSON.parse(localStorage.getItem('archive') || '[]')
-        return {students, archive}
-    } catch (error) {
-        return {students: [], archive: []}
-    }
-} 
-
-const localStoragePlugin = (store) => {
-    const {students, archive} = loadState()
-
-    store.commit('SET_STUDENTS', students)
-    store.commit('SET_ARCHIVE', archive)
-
-    const types = ['ADD_', 'DELETE_', 'UPDATE_', 'ARCHIVE_', 'SET_STUDENTS', 'SET_ARCHIVE']
-
-    store.subscribe((mutation, state) => {
-        if(types.some(type => mutation.type.startsWith(type))) {
-            localStorage.setItem('students', JSON.stringify(state.students))
-            localStorage.setItem('archive', JSON.stringify(state.archive))
-        }
-    })
-}
+import createPersistedState from 'vuex-persistedstate';
 
 export default createStore({
     state: {
@@ -36,7 +11,11 @@ export default createStore({
         studentToDelete: null,
     },
 
-    plugins: [localStoragePlugin],
+    plugins: [
+        createPersistedState({
+            key: 'student-data',
+        })
+    ],
 
     getters: {
         filteredStudents(state) {
@@ -117,12 +96,12 @@ export default createStore({
             commit('ADD_STUDENT', student)
         },
 
-        deleteStudent({commit}, student) {
+        deleteStudent({ commit }, student) {
             commit('ARCHIVE_STUDENT', student)
             commit('DELETE_STUDENT', student.index)
         },
 
-        updateStudent({commit}, student) {
+        updateStudent({ commit }, student) {
             commit('UPDATE_STUDENT', student)
         },
     },
