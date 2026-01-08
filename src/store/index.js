@@ -13,7 +13,7 @@ export default createStore({
 
     plugins: [
         createPersistedState({
-            key: 'student-data',
+            key: 'vuex-data',
         })
     ],
 
