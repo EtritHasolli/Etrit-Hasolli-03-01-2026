@@ -18,8 +18,7 @@
 
         methods: {
             handleLogout() {
-                localStorage.removeItem('user')
-                localStorage.removeItem('userPass')
+                this.$store.dispatch('logOut')
             }
         },
     }

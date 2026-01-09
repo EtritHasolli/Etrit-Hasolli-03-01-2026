@@ -7,6 +7,7 @@ import EditStudent from '@/views/EditStudent.vue'
 import StudentPage from '@/views/StudentPage.vue'
 import ArchivePage from '@/views/ArchivePage.vue'
 import HelpPage from '../views/HelpPage.vue'
+import store from '../store'
 
 const routes = [
   { path: '/', redirect: '/login' },
@@ -24,9 +25,7 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  const user = localStorage.getItem('user')
-  const userPass = localStorage.getItem('userPass')
-  const isAuthenticated = user && userPass
+  const isAuthenticated = store.state.isAuthenticated
 
   if (to.path !== '/login' && !isAuthenticated) {
     next('/login')

@@ -59,8 +59,13 @@
                 return
               }
 
-              localStorage.setItem('user', this.username)
-              localStorage.setItem('userPass', this.password)
+              this.isWrong = false
+
+              this.$store.dispatch('logUser', { 
+                userName: this.username, 
+                userPassword: this.password
+            })
+
               this.$router.push('/home')
             }
         }

@@ -5,10 +5,12 @@ export default createStore({
     state: {
         students: [],
         archive: [],
+        user: [],
         searchQuery: '',
         showModal: false,
         showDeleteDialog: false,
         studentToDelete: null,
+        isAuthenticated: false,
     },
 
     plugins: [
@@ -37,6 +39,16 @@ export default createStore({
     },
 
     mutations: {
+        SET_USER(state, { userName, userPassword}) {
+            state.user = { userName, userPassword }
+            state.isAuthenticated = true
+        },
+
+        REMOVE_USER(state) {
+            state.user = null
+            state.isAuthenticated = false
+        },
+
         SET_STUDENTS(state, students) {
             state.students = students
         },
@@ -86,6 +98,14 @@ export default createStore({
     },
 
     actions: {
+        logUser({ commit }, { userName, userPassword }) {
+            commit('SET_USER', { userName, userPassword })
+        },
+
+        logOut({ commit }) {
+            commit('REMOVE_USER')
+        },
+
         addStudent({commit, state}, student) {
             const indexExists = state.students.some(s => s.index == student.index)
 
